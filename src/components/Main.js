@@ -1,10 +1,20 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import {useState, useEffect } from 'react';
+import Home from "../Pages/Home";
 import Index from  "../Pages/Index";
 import Show from "../Pages/Show";
 
+const PrivateRoute = ({ children, user }) => {
+    if(user){
+        return children;
+    }  else {
+        return <Navigate to="/" />
+    }
+}
+
 
 export default function Main (props) {
+    const user = props.user;
     const [people, setPeople] = useState(null);
 
     const API_URL = "http://localhost:4000/api/people"
@@ -24,8 +34,12 @@ export default function Main (props) {
     }
 
     useEffect(() => {
-        getPeople();
-    }, [])
+        if(user){
+            getPeople();
+        } else {
+            setPeople(null);
+        }
+    }, [  user ])
 
     const createPeople = async (person) => { // {name: 'Mary', title:'Scientist', image:'URL'}
         try {
@@ -53,16 +67,40 @@ export default function Main (props) {
         }
     }
 
+    const updatePeople = async (id, updatedPerson) => {
+        try {
+            await fetch(`${API_URL}/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'Application/json'
+                },
+                body: JSON.stringify(updatedPerson)
+            });
+            getPeople();
+        } catch (error) {
+            
+        }
+    }
+
     return(
         <>
         <main>
             <Routes>
-                <Route path="/"  element={<Index people={people} createPeople={createPeople} />}/>
+                <Route path="/" element={<Home/>} />
+
+                <Route path="/people"  element={<PrivateRoute user={user}><Index people={people} createPeople={createPeople} /></PrivateRoute>}/>
 
                 <Route 
                 path="/people/:id" 
-                element={<Show 
-                            people={people} deletePeople={deletePeople} />} />
+                element={
+                    <PrivateRoute>
+                            <Show 
+                            people={people} 
+                            deletePeople={deletePeople}
+                            updatePeople={updatePeople}
+                            />
+                            </PrivateRoute>
+                            } />
             </Routes>
         </main>
         </>

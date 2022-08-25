@@ -1,5 +1,5 @@
 import {Link} from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { renderIntoDocument } from 'react-dom/test-utils';
 
 // for state, formValid = false; const isFormValid () {return newForm.name.length > 3 && newForm.title.length > 3}
@@ -13,7 +13,8 @@ export default function Index (props){
         image: "",
         title: ""
     })
-
+    const [formValid, setFormValid ] = useState(false);
+    const isFormValid = () => {return (newForm.name.length >= 3 && newForm.title.length >= 3)}
     const loaded = () => {
         return props.people.map(({name, title, image, _id}) => {
             
@@ -48,17 +49,22 @@ export default function Index (props){
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        if(!isFormValid()) return
         // if(Object.values(newForm).length === 0) return;
         if(Object.values(newForm).indexOf('') === -1) return;
         props.createPeople(newForm);
     };
+
+    useEffect(() => {
+        setFormValid(isFormValid())
+    },[newForm])
 
     return (<section>
                 <form onSubmit={handleSubmit}>
                     <input type="text" value={newForm.name} onChange={handleChange} name="name" placeholder="Name" />
                     <input type="text" value={newForm.title} onChange={handleChange} name="title" placeholder="Title of Person" />
                     <input type="text" value={newForm.image} onChange={handleChange} name="image" placeholder="Image  URL" />
-                    <input type="submit" value="Send" />
+                    <input disabled={!isFormValid()} type="submit" value="Send" />
                 </form>
             {props.people ? loaded() : loading()}
              </section>);
