@@ -1,6 +1,5 @@
 import {Link} from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import { renderIntoDocument } from 'react-dom/test-utils';
+import { useState, useEffect, useRef } from 'react';
 
 // for state, formValid = false; const isFormValid () {return newForm.name.length > 3 && newForm.title.length > 3}
 
@@ -55,8 +54,13 @@ export default function Index (props){
         props.createPeople(newForm);
     };
 
+    const isFormValidRef = useRef(null);
+
+    useEffect(()  => {
+        isFormValidRef.current = isFormValid;
+    })
     useEffect(() => {
-        setFormValid(isFormValid())
+        setFormValid(isFormValidRef.current())
     },[newForm])
 
     return (<section>
