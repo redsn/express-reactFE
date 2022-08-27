@@ -79,8 +79,12 @@ export default function Main (props) {
 
     const deletePeople = async (id) => {
         try {
+            const token = await user.getIdToken();
             await fetch(`${API_URL}/${id}`, {
-                method: 'DELETE'
+                method: 'DELETE',
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                }
             });
             getPeople();
         } catch (error) {
