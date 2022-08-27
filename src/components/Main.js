@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import {useState, useEffect } from 'react';
+import {useState, useEffect, useRef } from 'react';
 import Home from "../Pages/Home";
 import Index from  "../Pages/Index";
 import Show from "../Pages/Show";
@@ -8,7 +8,9 @@ const PrivateRoute = ({ children, user }) => {
     if(user){
         return children;
     }  else {
-        return <Navigate to="/" />
+        console.log(user);
+        return (<Navigate to="/" />
+        )
     }
 }
 
@@ -17,12 +19,24 @@ export default function Main (props) {
     const user = props.user;
     const [people, setPeople] = useState(null);
 
-    const API_URL = "http://localhost:4000/api/people"
+    const getPeopleRef = useRef(null)
+
+    // const API_URL = "http://localhost:4000/api/people"
+    const API_URL = "https://warm-mountain-87567.herokuapp.com/api/people"
 
     const getPeople  = async () => {
 
         try {
-            const response = await fetch(API_URL);
+            const token = await props.user.getIdToken();
+            // console.log(token);
+            // const payload = token.split('.')[1]
+            // JSON.parse(atob(payload))
+            const response = await fetch(API_URL, {
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                }
+            });
             const data = await response.json();
             console.log(data);
             setPeople(data);
@@ -33,9 +47,14 @@ export default function Main (props) {
         }
     }
 
+    useEffect(()=>{
+        getPeopleRef.current = getPeople;
+    } )
+
     useEffect(() => {
         if(user){
-            getPeople();
+            // getPeople();
+            getPeopleRef.current();
         } else {
             setPeople(null);
         }
@@ -43,10 +62,12 @@ export default function Main (props) {
 
     const createPeople = async (person) => { // {name: 'Mary', title:'Scientist', image:'URL'}
         try {
+            const token = await user.getIdToken();
             await fetch(API_URL, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'Application/json'
+                    'Content-Type': 'Application/json',
+                    'Authorization': 'Bearer ' + token
                 },
                 body: JSON.stringify(person),
             })
@@ -88,12 +109,12 @@ export default function Main (props) {
             <Routes>
                 <Route path="/" element={<Home/>} />
 
-                <Route path="/people"  element={<PrivateRoute user={user}><Index people={people} createPeople={createPeople} /></PrivateRoute>}/>
+                <Route path="/people"  element={<PrivateRoute user={props.user}><Index people={people} createPeople={createPeople} /></PrivateRoute>}/>
 
                 <Route 
                 path="/people/:id" 
                 element={
-                    <PrivateRoute>
+                    <PrivateRoute user={user}>
                             <Show 
                             people={people} 
                             deletePeople={deletePeople}

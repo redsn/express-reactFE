@@ -38,7 +38,7 @@ export default function Show (props){
     useEffect(() => {
         if(person) {
         setUpdateForm(person)}
-    }, [props.people]);
+    }, [/*props.people,*/ person]);
 
     const loading = () => {<h1>Loading data...</h1>};
     const loaded = () => {
