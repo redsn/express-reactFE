@@ -1,5 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import {useState, useEffect} from 'react';
+import Head from "../components/Head";
 
 export default function Show (props){
     const [updateForm, setUpdateForm] = useState({
@@ -54,6 +55,7 @@ export default function Show (props){
     }
     return(
         <div className="person">
+            <Head title="Show"/>
             {/* <h1>{person.name}</h1>
             <h2>{person.title}</h2>
             <img src={person.image} alt={person.name} className="person-image" /> */}

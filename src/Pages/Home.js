@@ -1,5 +1,12 @@
+
+// import {Helmet} from 'react-helmet';
+import Head from '../components/Head';
+
+
 const Home =(props) => {
-    return <h1>Homepage</h1>
+    return (<>
+    <Head title="home"/>
+    <h1>Homepage</h1></>)
 };
 
 export default Home;

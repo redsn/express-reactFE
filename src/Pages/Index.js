@@ -1,5 +1,6 @@
 import {Link} from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
+import Head from '../components/Head';
 
 // for state, formValid = false; const isFormValid () {return newForm.name.length > 3 && newForm.title.length > 3}
 
@@ -63,7 +64,10 @@ export default function Index (props){
         setFormValid(isFormValidRef.current())
     },[newForm])
 
-    return (<section>
+    return (
+    <>
+    <Head title="index"/>
+    <section>
                 <form onSubmit={handleSubmit}>
                     <input type="text" value={newForm.name} onChange={handleChange} name="name" placeholder="Name" />
                     <input type="text" value={newForm.title} onChange={handleChange} name="title" placeholder="Title of Person" />
@@ -71,5 +75,7 @@ export default function Index (props){
                     <input disabled={!formValid} type="submit" value="Send" />
                 </form>
             {props.people ? loaded() : loading()}
-             </section>);
+             </section>
+             </>
+             );
 }
