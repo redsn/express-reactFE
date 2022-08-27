@@ -68,7 +68,7 @@ export default function Index (props){
                     <input type="text" value={newForm.name} onChange={handleChange} name="name" placeholder="Name" />
                     <input type="text" value={newForm.title} onChange={handleChange} name="title" placeholder="Title of Person" />
                     <input type="text" value={newForm.image} onChange={handleChange} name="image" placeholder="Image  URL" />
-                    <input disabled={!isFormValid()} type="submit" value="Send" />
+                    <input disabled={!formValid} type="submit" value="Send" />
                 </form>
             {props.people ? loaded() : loading()}
              </section>);
